@@ -42,7 +42,7 @@ module.exports = {
         enabled: false,
     },
     solidity: {
-        compilers: [{ version: "0.8.8" }, { version: "0.6.6" }], // compilers in this syntax
+        compilers: [{ version: "0.8.8" }, { version: "0.6.6" }, { version: "0.4.19" }], // compilers in this syntax
     },
     namedAccounts: {
         // Named accounts module
