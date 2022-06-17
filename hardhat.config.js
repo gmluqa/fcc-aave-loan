@@ -10,6 +10,7 @@ const RINKEBY_RPC_URL = process.env.RINKEBY_RPC_URL
 const PRIVATE_KEY = process.env.PRIVATE_KEY
 const COINMARKETCAP_API_KEY = process.env.COINMARKETCAP_API_KEY
 const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY
+const MAINNET_RPC_URL = process.env.MAINNET_RPC_URL
 
 /**
  * @type import('hardhat/config').HardhatUserConfig
@@ -19,6 +20,10 @@ module.exports = {
     networks: {
         hardhat: {
             chainId: 31337,
+            // https://hardhat.org/hardhat-network/guides/mainnet-forking
+            forking: {
+                url: MAINNET_RPC_URL,
+            },
             // blockConfirmations: 1,
         },
         localhost: {
@@ -47,7 +52,7 @@ module.exports = {
     namedAccounts: {
         // Named accounts module
         deployer: {
-            default: 0, // defaults to hardhat account[0]
+            default: 0, // defaults to hardhat account[0] or account [0]
             1: 0,
         },
         player: {
