@@ -11,7 +11,7 @@ async function getWeth() {
         "IWeth",
         "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2", // https://etherscan.io/token/0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2
         // "0xc778417E063141139Fce010982780140Aa0cD5Ab", // https://rinkeby.etherscan.io/token/0xc778417e063141139fce010982780140aa0cd5ab
-        deployer
+        deployer // Signer
         // ABI is found by looking in: contracts/interfaces/IWeth.sol/IWeth.json
         // Then it plasters the ABI on the address
         // From the deployers account
@@ -22,4 +22,4 @@ async function getWeth() {
     console.log(`Got ${wethBalance.toString()} WETH`)
 }
 
-module.exports = { getWeth }
+module.exports = { getWeth, AMOUNT }

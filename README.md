@@ -1,4 +1,4 @@
-1. Deposit collat ETH // WETH
+1. Deposit collat ETH // WETH : COMPLETE
 2. Borrow DAI
 3. REPAY DAI
 
