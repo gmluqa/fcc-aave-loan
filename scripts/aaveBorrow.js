@@ -18,8 +18,44 @@ async function main() {
     console.log("Depositing...")
     await lendingPool.deposit(wethTokenAddress, AMOUNT, deployer, 0) // refferal code 0 if empty
     console.log("Deposited")
-    let { avaliableBorrowsETH, totalDebtETH } = await getBorrowUserData(lendingPool, deployer)
+    let { availableBorrowsETH, totalDebtETH } = await getBorrowUserData(lendingPool, deployer)
     // Collateral is laid down, now we need to borrow
+    const daiPrice = await getDaiPrice()
+    const amountDaiToBorrow = availableBorrowsETH.toString() * 0.95 * (1 / daiPrice.toNumber()) // 0.95 for 95% cap of borrow
+    console.log(`You can borrow ${amountDaiToBorrow} DAI`)
+    const amountDaiToBorrowWei = ethers.utils.parseEther(amountDaiToBorrow.toString())
+    const daiTokenAddress = "0x6b175474e89094c44da98b954eedeac495271d0f"
+    await borrowDai(daiTokenAddress, lendingPool, amountDaiToBorrowWei, deployer)
+    await getBorrowUserData(lendingPool, deployer)
+    await repay(amountDaiToBorrowWei, daiTokenAddress, lendingPool, deployer)
+    await getBorrowUserData(lendingPool, deployer)
+}
+
+// https://docs.aave.com/developers/v/2.0/the-core-protocol/lendingpool#repay
+async function repay(amount, daiAddress, lendingPool, account) {
+    await approveErc20(daiAddress, lendingPool.address, amount, account)
+    const repayTx = await lendingPool.repay(daiAddress, amount, 1, account)
+    await repayTx.wait(1)
+    console.log("Repaid!")
+}
+
+async function borrowDai(daiAddress, lendingPool, amountDaiToBorrowWei, account) {
+    // https://docs.aave.com/developers/v/2.0/the-core-protocol/lendingpool#borrow
+    const borrowTx = await lendingPool.borrow(daiAddress, amountDaiToBorrowWei, 1, 0, account)
+    await borrowTx.wait(1)
+    console.log("Borrow success")
+}
+
+async function getDaiPrice() {
+    // https://docs.chain.link/docs/ethereum-addresses/#Ethereum%20Mainnet we grab the instantiated pricefeed contract, linkedin with ABI/interface
+    const daiEthPriceFeed = await ethers.getContractAt(
+        "AggregatorV3Interface",
+        "0x773616E4d11A78F511299002da57A0a94577F1f4"
+    )
+    // Don't need to connect with deployer since it's readonly operation
+    const price = (await daiEthPriceFeed.latestRoundData())[1] // It gets all the vars in an array, then selects index [1]
+    console.log(`The DAI/ETH price is ${price.toString()}`)
+    return price
 }
 
 async function getBorrowUserData(lendingPool, account) {
