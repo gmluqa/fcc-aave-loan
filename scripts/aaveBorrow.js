@@ -18,6 +18,18 @@ async function main() {
     console.log("Depositing...")
     await lendingPool.deposit(wethTokenAddress, AMOUNT, deployer, 0) // refferal code 0 if empty
     console.log("Deposited")
+    let { avaliableBorrowsETH, totalDebtETH } = await getBorrowUserData(lendingPool, deployer)
+    // Collateral is laid down, now we need to borrow
+}
+
+async function getBorrowUserData(lendingPool, account) {
+    const { totalCollateralETH, totalDebtETH, availableBorrowsETH } =
+        // https://www.youtube.com/watch?v=-vR3a11Wzt0 {destructuring, different, elements} = "gives them", "values", "from the object"
+        await lendingPool.getUserAccountData(account)
+    console.log(`You have ${totalCollateralETH} worth of ETH deposited`)
+    console.log(`You have ${totalDebtETH} debt to cover`)
+    console.log(`You have ${availableBorrowsETH} avaliable to borrow`)
+    return { availableBorrowsETH, totalDebtETH }
 }
 
 async function approveErc20(erc20Address, spenderAddress, amountToSpend, account) {
